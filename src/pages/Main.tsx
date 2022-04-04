@@ -17,16 +17,14 @@ import {
   checkOptions,
 } from "../utils/util";
 import CustomSelect from "../components/Select";
-const defaultState: FilterOption = { state: "", city: "", type: "" };
+
 const Main = () => {
   const [list, setList] = useState<MockData[] | SortedData[]>([]);
   const [originData, setOriginData] = useState<MockData[]>([]);
   const [stateList, setStateList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
   const [typeList, setTypeList] = useState<string[]>([]);
-  const [state, setState] = useState<string>("");
-  const [city, setCity] = useState<string>("");
-  const [type, setType] = useState<string>("");
+  const [condition, setCondition] = useState<FilterOption>({state: '', city: '', type: ''});
   const [secondList, setSecondList] = useState<MockData[] | SortedData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dynamicType, setDynamicType] = useState<Column[]>([]);
@@ -52,43 +50,36 @@ const Main = () => {
       });
   }, []);
 
-  const toSort = () => {
-    const data = JSON.parse(JSON.stringify(originData));
-    sortData(data);
-  };
-
   const reSort = () => {
     setIsLoading((x) => (x = !x));
-    toSort();
+    if(originData)  sortData(originData);
   }
 
   const cState = (title: string) => {
-    defaultState.state = title;
-    setState(title);
-    reSort()
+    setCondition((x) => {return {...x, state: title}} )
   };
 
   const cCity = (title: string) => {
-    defaultState.city = title;
-    setCity(title);
-    reSort();
+    setCondition((x) => {return {...x, city: title}} )
   };
 
   const cType = (title: string) => {
-    defaultState.type = title;
-    setType(title);
-    reSort();
+    setCondition((x) => {return {...x, type: title}});
   };
 
+  useEffect(() => {
+    reSort();
+  }, [condition])
+
   const sortData = async (data: MockData[]) => {
-    const hasOptions = await checkOptions(data, defaultState);
+    const hasOptions = await checkOptions(data, condition);
     let dynamicCol =
       (await hasOptions.length) < 1
         ? rawColumns
-        : !!defaultState.type
+        : !!condition.type
         ? columnsWithType
         : columns;
-    const list2 = processData(data, defaultState);
+    const list2 = processData(data, condition);
     setSecondList(list2);
     setDynamicType(dynamicCol);
     setIsLoading((x) => (x = !x));
@@ -106,23 +97,23 @@ const Main = () => {
           <CustomSelect
             options={stateList}
             isLoading={isLoading}
-            defaultValue={state}
+            defaultValue={condition.state}
             type={"state"}
-            changeState={(title) => cState(title)}
+            changeState={cState}
           />
           <CustomSelect
             options={cityList}
             isLoading={isLoading}
-            defaultValue={city}
+            defaultValue={condition.city}
             type={"city"}
-            changeState={(title) => cCity(title)}
+            changeState={cCity}
           />
           <CustomSelect
             options={typeList}
             isLoading={isLoading}
-            defaultValue={type}
+            defaultValue={condition.type}
             type={"type"}
-            changeState={(title) => cType(title)}
+            changeState={ cType}
           />
         </div>
         <CustomTable cols={dynamicType} data={secondList} loading={isLoading} />
