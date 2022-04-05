@@ -6,7 +6,7 @@ import {
   SortedData,
   rawColumns,
   columnsWithType,
-  FilterOption,
+  DynamicString,
   Column,
 } from "../model/models";
 import {
@@ -24,7 +24,7 @@ const Main = () => {
   const [stateList, setStateList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
   const [typeList, setTypeList] = useState<string[]>([]);
-  const [condition, setCondition] = useState<FilterOption>({state: '', city: '', type: ''});
+  const [condition, setCondition] = useState<DynamicString>({state: '', city: '', type: ''});
   const [secondList, setSecondList] = useState<MockData[] | SortedData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dynamicType, setDynamicType] = useState<Column[]>([]);
@@ -71,10 +71,10 @@ const Main = () => {
     reSort();
   }, [condition])
 
-  const sortData = async (data: MockData[]) => {
-    const hasOptions = await checkOptions(data, condition);
-    let dynamicCol =
-      (await hasOptions.length) < 1
+  const sortData = (data: MockData[]) => {
+    const hasOptions = checkOptions(data, condition);
+    let dynamicCol: Column[] =
+      hasOptions.length < 1
         ? rawColumns
         : !!condition.type
         ? columnsWithType

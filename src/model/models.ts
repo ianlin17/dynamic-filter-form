@@ -6,7 +6,7 @@ export interface MockData {
   price: number;
 }
 
-export interface TempObj {
+export interface ProcessingObj {
   [key: string]: SortedData;
 }
 
@@ -21,10 +21,8 @@ export interface Column {
   dataIndex: string;
 }
 
-export interface FilterOption {
-  state: string;
-  city: string;
-  type: string;
+export interface DynamicString {
+  [key: string]: string;
 }
 
 export const rawColumns: Column[] = [

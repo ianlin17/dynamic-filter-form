@@ -1,14 +1,14 @@
-import { FilterOption, MockData, SortedData, TempObj } from "../model/models";
+import { DynamicString, MockData, SortedData, ProcessingObj } from "../model/models";
 export const getStateSelections = (data: MockData[]) =>
   Array.from(new Set(data.map((x: MockData) => x.state)));
 export const getCitySelections = (data: MockData[]) =>
   Array.from(new Set(data.map((x: MockData) => x.city)));
 export const getTypeSelections = (data: MockData[]) =>
   Array.from(new Set(data.map((x: MockData) => x.type)));
-export function processData(data: MockData[], filterData: FilterOption) {
+export function processData(data: MockData[], filterData: DynamicString) {
   const hasResult = checkOptions(data, filterData);
   if (hasResult.length < 1) return data;
-  const result: TempObj = {};
+  const result: ProcessingObj = {};
   const optionResult = handleOptions(data, filterData);
   const values = optionResult.values();
   for (let i = 0; i < optionResult.length; i++) {
@@ -38,7 +38,7 @@ export function processData(data: MockData[], filterData: FilterOption) {
   return list;
 }
 
-export const handleOptions = (data: MockData[], filterData: any) => {
+export const handleOptions = (data: MockData[], filterData: DynamicString) => {
   Object.keys(filterData).forEach((name) => {
     if (!!filterData[name]) {
       switch (name) {
@@ -59,8 +59,8 @@ export const handleOptions = (data: MockData[], filterData: any) => {
   return data;
 };
 
-export const checkOptions = (data: MockData[], filterData: any) => {
-  let result: any = [];
+export const checkOptions = (data: MockData[], filterData: DynamicString) => {
+  let result: MockData[][] = [];
   Object.keys(filterData).forEach((name) => {
     if (!!filterData[name]) {
       switch (name) {
