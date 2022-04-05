@@ -19,20 +19,16 @@ export function processData(data: MockData[], filterData: DynamicString) {
       result[cur.city]["price"] += cur.price;
     } else {
       result[cur.city] = {
-        state: cur.state,
-        city: cur.city,
-        count: 1,
-        price: cur.price,
-        id: cur.id,
-        type: cur.type,
+        ...cur,
+        count: 1
       };
     }
   }
-  const list = Object.values(result).map((c: SortedData) => {
-    let avg = Math.floor(c.price / c.count);
+  const list = Object.values(result).map((data: SortedData) => {
+    let avgPrice = Math.floor(data.price / data.count);
     return {
-      ...c,
-      avg: avg,
+      ...data,
+      avg: avgPrice,
     };
   });
   return list;
