@@ -73,16 +73,16 @@ const Main = () => {
   };
 
   useMemo(() => {
-    const hasOptions = checkOptions(originData, condition);
+    const optionList = checkOptions(originData, condition);
+    const renderData = processData(originData, condition);
     const dynamicCol: Column[] =
-      hasOptions.length < 1
+    optionList.length < 1
         ? rawColumns
         : !!condition.type
         ? columnsWithType
         : columns;
     setDynamicType(dynamicCol);
-    const list2 = processData(originData, condition);
-    setSecondList(list2);
+    setSecondList(renderData);
   }, [originData, condition]);
 
   return (
