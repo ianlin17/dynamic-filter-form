@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import CustomTable from "../components/Table";
 import {
   MockData,
@@ -50,11 +50,6 @@ const Main = () => {
       });
   }, []);
 
-  const reSort = () => {
-    setIsLoading((x) => (x = !x));
-    if(originData)  sortData(originData);
-  }
-
   const cState = (title: string) => {
     setCondition((x) => {return {...x, state: title}} )
   };
@@ -67,20 +62,16 @@ const Main = () => {
     setCondition((x) => {return {...x, type: title}});
   };
 
-  useEffect(() => {
-    reSort();
-  }, [condition])
+  useMemo(() =>{const list2 = processData(originData, condition); setSecondList(list2);}, [originData, condition]);
 
   const sortData = (data: MockData[]) => {
-    const hasOptions = checkOptions(data, condition);
-    let dynamicCol: Column[] =
+    const hasOptions = checkOptions(data,condition);
+    const dynamicCol: Column[] =
       hasOptions.length < 1
         ? rawColumns
         : !!condition.type
         ? columnsWithType
         : columns;
-    const list2 = processData(data, condition);
-    setSecondList(list2);
     setDynamicType(dynamicCol);
     setIsLoading((x) => (x = !x));
   };
