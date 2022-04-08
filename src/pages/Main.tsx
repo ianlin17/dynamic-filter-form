@@ -24,7 +24,11 @@ const Main = () => {
   const [stateList, setStateList] = useState<string[]>([]);
   const [cityList, setCityList] = useState<string[]>([]);
   const [typeList, setTypeList] = useState<string[]>([]);
-  const [condition, setCondition] = useState<DynamicString>({state: '', city: '', type: ''});
+  const [condition, setCondition] = useState<DynamicString>({
+    state: "",
+    city: "",
+    type: "",
+  });
   const [secondList, setSecondList] = useState<MockData[] | SortedData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dynamicType, setDynamicType] = useState<Column[]>([]);
@@ -42,30 +46,34 @@ const Main = () => {
         const cityList = getCitySelections(data);
         const typeList = getTypeSelections(data);
         setOriginData(data);
-        sortData(data);
         setList(temp);
         setStateList(stateList);
         setCityList(cityList);
         setTypeList(typeList);
+        setIsLoading((x) => (x = !x));
       });
   }, []);
 
   const cState = (title: string) => {
-    setCondition((x) => {return {...x, state: title}} )
+    setCondition((x) => {
+      return { ...x, state: title };
+    });
   };
 
   const cCity = (title: string) => {
-    setCondition((x) => {return {...x, city: title}} )
+    setCondition((x) => {
+      return { ...x, city: title };
+    });
   };
 
   const cType = (title: string) => {
-    setCondition((x) => {return {...x, type: title}});
+    setCondition((x) => {
+      return { ...x, type: title };
+    });
   };
 
-  useMemo(() =>{const list2 = processData(originData, condition); setSecondList(list2);}, [originData, condition]);
-
-  const sortData = (data: MockData[]) => {
-    const hasOptions = checkOptions(data,condition);
+  useMemo(() => {
+    const hasOptions = checkOptions(originData, condition);
     const dynamicCol: Column[] =
       hasOptions.length < 1
         ? rawColumns
@@ -73,8 +81,9 @@ const Main = () => {
         ? columnsWithType
         : columns;
     setDynamicType(dynamicCol);
-    setIsLoading((x) => (x = !x));
-  };
+    const list2 = processData(originData, condition);
+    setSecondList(list2);
+  }, [originData, condition]);
 
   return (
     <div className="flex justify-evenly pt-10 flex-row">
@@ -104,7 +113,7 @@ const Main = () => {
             isLoading={isLoading}
             defaultValue={condition.type}
             type={"type"}
-            changeState={ cType}
+            changeState={cType}
           />
         </div>
         <CustomTable cols={dynamicType} data={secondList} loading={isLoading} />
